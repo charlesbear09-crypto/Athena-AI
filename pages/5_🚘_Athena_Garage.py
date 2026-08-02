@@ -16,13 +16,7 @@ st.set_page_config(
 
 
 st.title("🚘 ATHENA GARAGE")
-st.subheader("2004 Silverado 1500 Single Cab 4.8L V8")
-
-
-st.divider()
-
-
-st.header("🧊 Athena Digital Twin")
+st.subheader("2004 Silverado Digital Twin")
 
 
 html = """
@@ -48,9 +42,9 @@ body {
 
 model-viewer {
 
-    width:100%;
-    height:650px;
-    background:#222;
+width:100%;
+height:700px;
+background:#222;
 
 }
 
@@ -65,27 +59,36 @@ model-viewer {
 
 <model-viewer
 
-src="/models/silverado.glb"
+src="models/silverado.glb"
 
 camera-controls
 
 auto-rotate
 
+auto-rotate-delay="0"
+
+rotation-per-second="30deg"
+
+camera-target="0m 0m 0m"
+
+camera-orbit="0deg 75deg 5m"
+
+field-of-view="60deg"
+
 shadow-intensity="1"
+
+environment-image="neutral"
 
 exposure="1"
 
-camera-orbit="0deg 75deg 3m"
-
-field-of-view="45deg"
-
 >
+
 
 </model-viewer>
 
 
-</body>
 
+</body>
 
 </html>
 
@@ -94,23 +97,5 @@ field-of-view="45deg"
 
 components.html(
     html,
-    height=700
-)
-
-
-
-st.divider()
-
-
-st.success(
-"""
-🤖 Athena Digital Twin Online
-
-Systems:
-
-✅ Silverado Model Connected
-✅ 3D Viewer Active
-🔄 Part Scanner Loading
-🔄 Modification System Loading
-"""
+    height=750
 )
