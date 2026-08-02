@@ -2,5 +2,11 @@
     "cash": 10000,
     "stocks": {},
     "history": [],
-    "athena_log": []
+    "athena_log": [],
+    "watchlist": [
+        "NVDA",
+        "AAPL",
+        "TSLA",
+        "MSFT"
+    ]
 }
