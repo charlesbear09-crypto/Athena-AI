@@ -2,6 +2,9 @@ import streamlit as st
 
 from auth import unlock_app
 from trading_engine import get_portfolio
+from market_data import get_prices
+from athena_report import generate_report
+
 
 
 if not unlock_app():
@@ -17,10 +20,8 @@ st.set_page_config(
 
 
 
-st.title("🤖 Athena AI Command Center")
-
-st.write(
-    "Your AI investment assistant dashboard"
+st.title(
+    "🤖 Athena AI Command Center"
 )
 
 
@@ -28,40 +29,46 @@ st.write(
 portfolio = get_portfolio()
 
 
-
-# ACCOUNT SECTION
-
-st.header("💰 Account Overview")
+report = generate_report()
 
 
-col1, col2, col3, col4 = st.columns(4)
+prices = get_prices()
 
 
-with col1:
+
+# TOP METRICS
+
+st.header("💰 Account Status")
+
+
+a,b,c,d = st.columns(4)
+
+
+with a:
     st.metric(
         "Cash",
         f"${portfolio['cash']:,.2f}"
     )
 
 
-with col2:
+with b:
     st.metric(
-        "Positions",
+        "Holdings",
         len(portfolio["stocks"])
     )
 
 
-with col3:
+with c:
     st.metric(
         "Trades",
         len(portfolio["history"])
     )
 
 
-with col4:
+with d:
     st.metric(
-        "Athena Actions",
-        len(portfolio.get("athena_log", []))
+        "Athena Confidence",
+        f"{report['confidence']}%"
     )
 
 
@@ -70,29 +77,19 @@ st.divider()
 
 
 
-# HOLDINGS
+# MARKET WATCH
 
-st.header("📊 Current Holdings")
+st.header("📈 Market Watch")
 
 
-if portfolio["stocks"]:
+for stock, price in prices.items():
 
-    for stock, data in portfolio["stocks"].items():
+    st.write(
+        f"""
+        **{stock}**
 
-        st.write(
-            f"""
-            **{stock}**
-
-            Shares: {data['shares']}
-
-            Average Price: ${data['average_price']}
-            """
-        )
-
-else:
-
-    st.info(
-        "Athena has no current positions."
+        ${price}
+        """
     )
 
 
@@ -101,9 +98,24 @@ st.divider()
 
 
 
-# ATHENA ACTIVITY
+# ATHENA REPORT
 
-st.header("🧠 Athena Activity")
+st.header("🧠 Athena Morning Briefing")
+
+
+st.info(
+    report["summary"]
+)
+
+
+
+st.divider()
+
+
+
+# ACTIVITY
+
+st.header("📜 Recent Athena Actions")
 
 
 logs = portfolio.get(
@@ -112,56 +124,17 @@ logs = portfolio.get(
 )
 
 
+
 if logs:
 
-    for log in logs[-5:]:
+    for item in logs[-5:]:
 
-        st.info(
-            f"""
-            Time:
-            {log['time']}
-
-            Action:
-            {log['action']}
-
-            Reason:
-            {log['reason']}
-            """
+        st.write(
+            item
         )
 
 else:
 
     st.write(
-        "Athena has not made any decisions yet."
+        "No automated actions yet."
     )
-
-
-
-st.divider()
-
-
-
-# DAILY RECAP
-
-st.header("📋 Daily Recap")
-
-
-st.write(
-    f"""
-    Athena Summary:
-
-    • Portfolio contains {len(portfolio['stocks'])} positions
-
-    • {len(portfolio['history'])} total trades recorded
-
-    • Athena has completed {len(logs)} automated actions
-
-    • System status: ONLINE
-    """
-)
-
-
-
-st.success(
-    "🤖 Athena is monitoring your paper trading account."
-)
