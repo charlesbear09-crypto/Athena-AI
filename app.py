@@ -1,4 +1,12 @@
 import streamlit as st
+
+from auth import login
+
+
+if not login():
+    st.stop()
+
+import streamlit as st
 from openai import OpenAI
 import json
 import os
