@@ -1,14 +1,3 @@
-import streamlit as st
-
-from auth import check_login
-from athena_trader import analyze_portfolio
-
-
-# Lock page
-if not check_login():
-    st.stop()
-
-
 st.title("🤖 Athena Trading Assistant")
 
 
