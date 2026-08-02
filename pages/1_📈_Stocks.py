@@ -1,88 +1,88 @@
 import streamlit as st
 
+from auth import unlock_app
 from trading_engine import buy_stock, sell_stock
+
+
+if not unlock_app():
+    st.stop()
+
 
 
 st.title("📈 Athena Paper Trading")
 
 
-st.write(
-    "Practice trading with fake money before using real investments."
-)
-
-
-# Fake prices for testing
 stocks = {
+
     "AAPL": 220,
     "TSLA": 320,
     "NVDA": 180,
     "MSFT": 520,
     "GOOGL": 190
+
 }
 
 
-selected_stock = st.selectbox(
-    "Choose Stock",
-    list(stocks.keys())
+
+stock = st.selectbox(
+    "Select Stock",
+    stocks.keys()
 )
 
 
-price = stocks[selected_stock]
 
+price = stocks[stock]
 
-st.subheader(selected_stock)
 
 st.write(
     f"Current Price: ${price}"
 )
 
 
+
 shares = st.number_input(
-    "Number of Shares",
+    "Shares",
     min_value=1,
-    value=1,
-    step=1
+    value=1
 )
 
 
-buy, sell = st.columns(2)
+
+col1, col2 = st.columns(2)
 
 
-with buy:
+
+with col1:
 
     if st.button("🟢 BUY"):
 
-        success, message = buy_stock(
-            selected_stock,
+        success, msg = buy_stock(
+            stock,
             shares,
             price
         )
 
         if success:
-            st.success(message)
+            st.success(msg)
+
         else:
-            st.error(message)
+            st.error(msg)
 
 
 
-with sell:
+
+with col2:
 
     if st.button("🔴 SELL"):
 
-        success, message = sell_stock(
-            selected_stock,
+        success, msg = sell_stock(
+            stock,
             shares,
             price
         )
 
         if success:
-            st.success(message)
+            st.success(msg)
+
         else:
-            st.error(message)
-
-
-st.divider()
-
-st.info(
-    "🤖 Athena is connected to this paper trading system."
-)
+            st.error(msg)
