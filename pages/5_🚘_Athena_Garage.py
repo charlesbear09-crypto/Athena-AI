@@ -1,92 +1,97 @@
 import streamlit as st
+import streamlit.components.v1 as components
+import os
 
 from auth import unlock_app
-from truck_ai import (
-    load_truck,
-    save_truck,
-    add_mod,
-    add_maintenance,
-    athena_mechanic
-)
-
 
 
 if not unlock_app():
-
     st.stop()
 
 
-
-st.title("🚘 Athena Garage")
-
-
-
-truck = load_truck()
-
-
-
-st.subheader(truck["vehicle"])
-
-
-
-# BUILD CUSTOMIZER
-
-st.header("🎨 Build Setup")
-
-
-paint = st.selectbox(
-    "Paint",
-    [
-        "Factory Silver",
-        "Candy Purple",
-        "Gloss Black",
-        "Pearl White"
-    ]
+st.set_page_config(
+    page_title="Athena Garage",
+    page_icon="🚘",
+    layout="wide"
 )
 
 
-wheels = st.selectbox(
-    "Wheels",
-    [
-        "Factory Wheels",
-        "Chrome Wheels",
-        "Black Street Wheels"
-    ]
-)
+st.title("🚘 ATHENA GARAGE")
+st.subheader("2004 Silverado 1500 Single Cab 4.8L V8")
 
 
-suspension = st.selectbox(
-    "Suspension",
-    [
-        "Factory",
-        "Lowered",
-        "Air Suspension"
-    ]
-)
+st.divider()
 
 
-engine = st.selectbox(
-    "Engine",
-    [
-        "4.8L Stock",
-        "4.8L Cam Build",
-        "6.2L Swap"
-    ]
-)
+st.header("🧊 Athena Digital Twin")
 
 
+model_file = "models/silverado.glb"
 
-if st.button("Save Build"):
 
-    truck["paint"] = paint
-    truck["wheels"] = wheels
-    truck["suspension"] = suspension
-    truck["engine"] = engine
+if os.path.exists(model_file):
 
-    save_truck(truck)
+    with open(model_file, "rb") as f:
 
-    st.success(
-        "Athena saved your build."
+        model_bytes = f.read()
+
+
+    import base64
+
+    model_data = base64.b64encode(model_bytes).decode()
+
+
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+
+    <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+    </script>
+
+    </head>
+
+
+    <body>
+
+
+    <model-viewer
+
+    src="data:model/gltf-binary;base64,{model_data}"
+
+    camera-controls
+
+    auto-rotate
+
+    style="
+    width:100%;
+    height:600px;
+    background:#111;
+    "
+
+    >
+
+    </model-viewer>
+
+
+    </body>
+
+    </html>
+    """
+
+
+    components.html(
+        html,
+        height=650
+    )
+
+
+else:
+
+    st.error(
+        "Athena cannot find silverado.glb"
     )
 
 
@@ -95,120 +100,19 @@ st.divider()
 
 
 
-# MODS
-
-st.header("🔩 Add Modification")
+st.header("🤖 Athena Vehicle Scan")
 
 
-mod = st.text_input(
-    "Example: Headers"
+st.success(
+"""
+Digital Twin Connected
+
+Systems Ready:
+
+✅ Exterior Model
+✅ Rotation
+✅ Zoom
+✅ Inspection Mode (coming)
+✅ Modification Simulator (coming)
+"""
 )
-
-
-if st.button("Add Mod"):
-
-    add_mod(mod)
-
-    st.success(
-        "Modification saved."
-    )
-
-
-
-st.write(
-    "Current Mods:"
-)
-
-
-for m in truck["mods"]:
-
-    st.write(
-        "• " + m
-    )
-
-
-
-st.divider()
-
-
-
-# COST TRACKER
-
-st.header("💰 Build Cost Planner")
-
-
-parts = {
-
-    "Camshaft": 500,
-
-    "Headers": 800,
-
-    "Exhaust": 1200,
-
-    "Air Suspension": 3000,
-
-    "6.2L Swap": 6000,
-
-    "Wheels/Tires": 2500
-
-}
-
-
-total = 0
-
-
-for part, price in parts.items():
-
-    if st.checkbox(
-        f"{part} (${price})"
-    ):
-
-        total += price
-
-
-
-st.metric(
-    "Estimated Build Cost",
-    f"${total:,}"
-)
-
-
-
-st.divider()
-
-
-
-# MAINTENANCE
-
-st.header("🛠 Maintenance Tracker")
-
-
-maintenance = st.text_input(
-    "Example: Oil change at 200,000 miles"
-)
-
-
-if st.button("Save Maintenance"):
-
-    add_maintenance(
-        maintenance
-    )
-
-    st.success(
-        "Maintenance saved."
-    )
-
-
-
-st.divider()
-
-
-
-# ATHENA MECHANIC
-
-st.header("🤖 Athena Mechanic")
-
-
-for advice in athena_mechanic():
-
-    st.info(advice)
