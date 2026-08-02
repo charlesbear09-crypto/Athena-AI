@@ -1,11 +1,17 @@
+import streamlit as st
+
+from trading_engine import buy_stock, sell_stock
+
+
 st.title("📈 Athena Paper Trading")
+
 
 st.write(
     "Practice trading with fake money before using real investments."
 )
 
 
-# Fake stock prices for now
+# Fake prices for testing
 stocks = {
     "AAPL": 220,
     "TSLA": 320,
@@ -39,10 +45,10 @@ shares = st.number_input(
 )
 
 
-buy_col, sell_col = st.columns(2)
+buy, sell = st.columns(2)
 
 
-with buy_col:
+with buy:
 
     if st.button("🟢 BUY"):
 
@@ -59,7 +65,7 @@ with buy_col:
 
 
 
-with sell_col:
+with sell:
 
     if st.button("🔴 SELL"):
 
@@ -75,9 +81,8 @@ with sell_col:
             st.error(message)
 
 
-
 st.divider()
 
 st.info(
-    "🤖 Athena is connected to this paper trading account."
+    "🤖 Athena is connected to this paper trading system."
 )
