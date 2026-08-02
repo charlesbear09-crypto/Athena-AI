@@ -1,67 +1,85 @@
 import streamlit as st
-import yfinance as yf
-import pandas as pd
+from trading_engine import buy_stock, sell_stock
 
 
-st.set_page_config(
-    page_title="Athena Stocks",
-    page_icon="📈"
+st.title("📈 Athena Paper Trading")
+
+
+st.write("Practice trading with fake money before using real investments.")
+
+
+# Example stocks (we will connect live prices later)
+stocks = {
+    "AAPL": 220,
+    "TSLA": 320,
+    "NVDA": 180,
+    "MSFT": 520,
+    "GOOGL": 190
+}
+
+
+selected_stock = st.selectbox(
+    "Choose Stock",
+    stocks.keys()
 )
 
 
-st.title("📈 Athena Stock Dashboard")
+price = stocks[selected_stock]
+
+
+st.subheader(selected_stock)
 
 st.write(
-    "Track stocks and build your watchlist."
+    f"Current Fake Market Price: ${price}"
 )
 
 
-# Watchlist
-
-default_stocks = [
-    "AAPL",
-    "MSFT",
-    "NVDA",
-    "TSLA"
-]
-
-
-stocks = st.multiselect(
-    "Choose stocks to watch:",
-    [
-        "AAPL",
-        "MSFT",
-        "NVDA",
-        "TSLA",
-        "GOOGL",
-        "AMZN",
-        "META",
-        "AMD"
-    ],
-    default=default_stocks
+shares = st.number_input(
+    "Number of Shares",
+    min_value=1,
+    step=1
 )
 
 
-
-for ticker in stocks:
-
-    stock = yf.Ticker(ticker)
-
-    data = stock.history(
-        period="1mo"
-    )
+col1, col2 = st.columns(2)
 
 
-    st.subheader(ticker)
+with col1:
 
-    st.line_chart(
-        data["Close"]
-    )
+    if st.button("🟢 BUY"):
+
+        success, message = buy_stock(
+            selected_stock,
+            shares,
+            price
+        )
+
+        if success:
+            st.success(message)
+        else:
+            st.error(message)
 
 
-    current = data["Close"].iloc[-1]
 
-    st.write(
-        "Current price:",
-        round(current,2)
-    )
+with col2:
+
+    if st.button("🔴 SELL"):
+
+        success, message = sell_stock(
+            selected_stock,
+            shares,
+            price
+        )
+
+        if success:
+            st.success(message)
+        else:
+            st.error(message)
+
+
+
+st.divider()
+
+st.info(
+    "Athena will eventually analyze these trades and help manage your strategy."
+)
