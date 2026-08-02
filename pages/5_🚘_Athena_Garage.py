@@ -1,192 +1,214 @@
 import streamlit as st
 
 from auth import unlock_app
+from truck_ai import (
+    load_truck,
+    save_truck,
+    add_mod,
+    add_maintenance,
+    athena_mechanic
+)
+
 
 
 if not unlock_app():
+
     st.stop()
 
 
-st.set_page_config(
-    page_title="Athena Garage",
-    page_icon="🚘",
-    layout="wide"
+
+st.title("🚘 Athena Garage")
+
+
+
+truck = load_truck()
+
+
+
+st.subheader(truck["vehicle"])
+
+
+
+# BUILD CUSTOMIZER
+
+st.header("🎨 Build Setup")
+
+
+paint = st.selectbox(
+    "Paint",
+    [
+        "Factory Silver",
+        "Candy Purple",
+        "Gloss Black",
+        "Pearl White"
+    ]
 )
 
 
-st.title("🚘 ATHENA GARAGE")
-st.subheader("2004 Chevrolet Silverado 1500 Single Cab 4.8L V8")
+wheels = st.selectbox(
+    "Wheels",
+    [
+        "Factory Wheels",
+        "Chrome Wheels",
+        "Black Street Wheels"
+    ]
+)
 
 
-st.divider()
-
-
-# Truck overview
-
-col1, col2 = st.columns(2)
-
-
-with col1:
-
-    st.header("🚚 Vehicle Profile")
-
-    st.write(
-    """
-    **Vehicle:** 2004 Silverado 1500
-
-    **Body:** Single Cab
-
-    **Engine:** 4.8L Vortec V8
-
-    **Transmission:** Automatic
-
-    **Drive System:** Rear Wheel Drive
-
-    **Status:** Stock Configuration
-    """
-    )
-
-
-with col2:
-
-    st.header("🤖 Athena Analysis")
-
-    st.info(
-    """
-    Athena Scan:
-
-    Current platform:
-    Reliable V8 truck.
-
-    Suggested build path:
-
-    • Suspension upgrade
-    • Wheel/tire setup
-    • Exhaust system
-    • Cam upgrade
-    • 6.2L swap possibility
-
-    Build goal:
-    Street performance + show truck.
-    """
-    )
-
-
-
-st.divider()
-
-
-
-# Systems
-
-st.header("🔧 Vehicle Systems")
-
-
-systems = [
-
-    "Engine Bay",
-
-    "Transmission",
-
+suspension = st.selectbox(
     "Suspension",
-
-    "Brakes",
-
-    "Interior",
-
-    "Exterior",
-
-    "Electrical"
-
-]
+    [
+        "Factory",
+        "Lowered",
+        "Air Suspension"
+    ]
+)
 
 
-selected = st.selectbox(
-    "Inspect System",
-    systems
+engine = st.selectbox(
+    "Engine",
+    [
+        "4.8L Stock",
+        "4.8L Cam Build",
+        "6.2L Swap"
+    ]
 )
 
 
 
-if selected == "Engine Bay":
+if st.button("Save Build"):
 
-    st.write(
-    """
-    🔥 Engine Bay
+    truck["paint"] = paint
+    truck["wheels"] = wheels
+    truck["suspension"] = suspension
+    truck["engine"] = engine
 
-    Current:
-    4.8L Vortec V8
-
-    Athena Notes:
-
-    Possible upgrades:
-
-    ✓ Camshaft
-    ✓ Headers
-    ✓ Intake
-    ✓ Exhaust
-    ✓ 6.2L Swap
-    """
-    )
-
-
-elif selected == "Suspension":
-
-    st.write(
-    """
-    Suspension Scan:
-
-    Current:
-    Factory suspension
-
-    Future options:
-
-    ✓ Lowering kit
-    ✓ Air suspension
-    ✓ Performance shocks
-    """
-    )
-
-
-elif selected == "Exterior":
-
-    st.write(
-    """
-    Exterior Customization:
-
-    Planned build:
-
-    ✓ Candy purple paint
-    ✓ Dark tint
-    ✓ Chrome wheels
-    ✓ Larger tires
-    ✓ Street style appearance
-    """
-    )
-
-
-else:
-
-    st.write(
-    f"Athena is scanning {selected}..."
-    )
-
-
-
-st.divider()
-
-
-st.header("🧠 Athena Build Assistant")
-
-
-question = st.text_input(
-    "Ask Athena about this truck"
-)
-
-
-if question:
+    save_truck(truck)
 
     st.success(
-        "Athena response: "
-        "This system will connect to your AI model next."
+        "Athena saved your build."
     )
+
+
+
+st.divider()
+
+
+
+# MODS
+
+st.header("🔩 Add Modification")
+
+
+mod = st.text_input(
+    "Example: Headers"
+)
+
+
+if st.button("Add Mod"):
+
+    add_mod(mod)
+
+    st.success(
+        "Modification saved."
+    )
+
+
+
+st.write(
+    "Current Mods:"
+)
+
+
+for m in truck["mods"]:
+
+    st.write(
+        "• " + m
+    )
+
+
+
+st.divider()
+
+
+
+# COST TRACKER
+
+st.header("💰 Build Cost Planner")
+
+
+parts = {
+
+    "Camshaft": 500,
+
+    "Headers": 800,
+
+    "Exhaust": 1200,
+
+    "Air Suspension": 3000,
+
+    "6.2L Swap": 6000,
+
+    "Wheels/Tires": 2500
+
+}
+
+
+total = 0
+
+
+for part, price in parts.items():
+
+    if st.checkbox(
+        f"{part} (${price})"
+    ):
+
+        total += price
+
+
+
+st.metric(
+    "Estimated Build Cost",
+    f"${total:,}"
+)
+
+
+
+st.divider()
+
+
+
+# MAINTENANCE
+
+st.header("🛠 Maintenance Tracker")
+
+
+maintenance = st.text_input(
+    "Example: Oil change at 200,000 miles"
+)
+
+
+if st.button("Save Maintenance"):
+
+    add_maintenance(
+        maintenance
+    )
+
+    st.success(
+        "Maintenance saved."
+    )
+
+
+
+st.divider()
+
+
+
+# ATHENA MECHANIC
+
+st.header("🤖 Athena Mechanic")
+
+
+for advice in athena_mechanic():
+
+    st.info(advice)
