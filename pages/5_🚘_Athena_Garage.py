@@ -1,7 +1,5 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import os
-import base64
 
 from auth import unlock_app
 
@@ -18,192 +16,61 @@ st.set_page_config(
 
 
 st.title("🚘 ATHENA GARAGE")
-st.subheader("2004 Silverado 1500 Single Cab 4.8L V8")
-
-
-st.divider()
-
 
 st.header("🧊 Athena Digital Twin")
 
 
-model_file = "models/silverado.glb"
+html = """
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<script type="module"
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+
+</head>
 
 
-if os.path.exists(model_file):
-
-    with open(model_file, "rb") as f:
-        model_bytes = f.read()
+<body>
 
 
-    model_data = base64.b64encode(
-        model_bytes
-    ).decode()
+<model-viewer
+
+src="models/silverado.glb"
+
+camera-controls
+
+auto-rotate
+
+camera-orbit="0deg 70deg 3m"
+
+field-of-view="45deg"
+
+style="
+width:100%;
+height:600px;
+background:#222;
+">
+
+</model-viewer>
 
 
-    html = f"""
-    <!DOCTYPE html>
+</body>
 
-    <html>
-
-    <head>
-
-    <script type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-    </script>
+</html>
+"""
 
 
-    <style>
-
-    body {{
-        margin: 0;
-        background: #111;
-    }}
-
-
-    model-viewer {{
-
-        width: 100%;
-
-        height: 650px;
-
-        background: #222;
-
-    }}
-
-    </style>
-
-
-    </head>
-
-
-
-    <body>
-
-
-    <model-viewer
-
-    src="data:model/gltf-binary;base64,{model_data}"
-
-    camera-controls
-
-    auto-rotate
-
-    rotation-per-second="20deg"
-
-    camera-orbit="0deg 75deg 3m"
-
-    field-of-view="45deg"
-
-    shadow-intensity="1"
-
-    exposure="1"
-
-    environment-image="neutral"
-
-    >
-
-    </model-viewer>
-
-
-
-    </body>
-
-    </html>
-    """
-
-
-    components.html(
-        html,
-        height=700
-    )
-
-
-else:
-
-    st.error(
-        "❌ Athena cannot find models/silverado.glb"
-    )
-
+components.html(
+    html,
+    height=650
+)
 
 
 st.divider()
 
 
-
-# Vehicle Data
-
-left, right = st.columns(2)
-
-
-
-with left:
-
-    st.header("🚚 Vehicle Profile")
-
-    st.write(
-    """
-    **Vehicle:**
-    2004 Silverado 1500
-
-    **Cab:**
-    Single Cab
-
-    **Engine:**
-    4.8L Vortec V8
-
-    **Transmission:**
-    Automatic
-
-    **Status:**
-    Digital Twin Connected
-    """
-    )
-
-
-
-with right:
-
-    st.header("🤖 Athena Scan")
-
-    st.success(
-    """
-    Systems Online:
-
-    ✅ 3D Viewer
-
-    ✅ Exterior Inspection
-
-    🔄 Part Scanner
-
-    🔄 Modification Simulator
-
-    🔄 Engine Breakdown
-    """
-    )
-
-
-
-st.divider()
-
-
-
-st.header("🔧 Future Inspection Systems")
-
-
-part = st.selectbox(
-    "Select Area",
-    [
-        "Engine Bay",
-        "Interior",
-        "Suspension",
-        "Brakes",
-        "Electrical",
-        "Body"
-    ]
-)
-
-
-st.info(
-    f"Athena is preparing {part} inspection mode."
-)
+st.success("Athena Digital Twin System Online")
