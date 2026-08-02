@@ -1,36 +1,31 @@
 import streamlit as st
 
 
-# Athena app password
 PASSWORD = "2327"
 
 
-def check_login():
+def login():
 
-    # Create login memory
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
 
 
-    # If not logged in, show login screen
-    if not st.session_state.logged_in:
+    if not st.session_state.authenticated:
 
-        st.title("🔐 Athena Secure Access")
+        st.title("🔐 Athena AI Secure Login")
 
         password = st.text_input(
-            "Enter Athena Password",
+            "Enter Password",
             type="password"
         )
 
 
-        if st.button("Login"):
+        if st.button("Unlock Athena"):
 
             if password == PASSWORD:
 
-                st.session_state.logged_in = True
-
-                st.success("Access Granted")
-
+                st.session_state.authenticated = True
+                st.success("Athena Unlocked")
                 st.rerun()
 
             else:
@@ -38,4 +33,7 @@ def check_login():
                 st.error("Incorrect Password")
 
 
-    return st.session_state.logged_in
+        return False
+
+
+    return True
