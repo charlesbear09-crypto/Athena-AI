@@ -1,21 +1,22 @@
-from auth import check_login
+import streamlit as st
 
+from auth import check_login
+from trading_engine import buy_stock, sell_stock
+
+
+# Lock page
 if not check_login():
     st.stop()
 
 
-
-import streamlit as st
-from trading_engine import buy_stock, sell_stock
-
-
 st.title("📈 Athena Paper Trading")
 
+st.write(
+    "Practice trading with fake money before using real investments."
+)
 
-st.write("Practice trading with fake money before using real investments.")
 
-
-# Example stocks (we will connect live prices later)
+# Fake stock prices for now
 stocks = {
     "AAPL": 220,
     "TSLA": 320,
@@ -27,7 +28,7 @@ stocks = {
 
 selected_stock = st.selectbox(
     "Choose Stock",
-    stocks.keys()
+    list(stocks.keys())
 )
 
 
@@ -37,21 +38,22 @@ price = stocks[selected_stock]
 st.subheader(selected_stock)
 
 st.write(
-    f"Current Fake Market Price: ${price}"
+    f"Current Price: ${price}"
 )
 
 
 shares = st.number_input(
     "Number of Shares",
     min_value=1,
+    value=1,
     step=1
 )
 
 
-col1, col2 = st.columns(2)
+buy_col, sell_col = st.columns(2)
 
 
-with col1:
+with buy_col:
 
     if st.button("🟢 BUY"):
 
@@ -68,7 +70,7 @@ with col1:
 
 
 
-with col2:
+with sell_col:
 
     if st.button("🔴 SELL"):
 
@@ -88,5 +90,5 @@ with col2:
 st.divider()
 
 st.info(
-    "Athena will eventually analyze these trades and help manage your strategy."
+    "🤖 Athena is connected to this paper trading account."
 )
