@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components
+import os
 
 from auth import unlock_app
 
@@ -8,69 +8,42 @@ if not unlock_app():
     st.stop()
 
 
-st.set_page_config(
-    page_title="Athena Garage",
-    page_icon="🚘",
-    layout="wide"
-)
+st.title("🚘 Athena Garage Test")
 
 
-st.title("🚘 ATHENA GARAGE")
-
-st.header("🧊 Athena Digital Twin")
+st.write("Checking model file...")
 
 
-html = """
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<script type="module"
-src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-</script>
-
-</head>
+path = "models/silverado.glb"
 
 
-<body>
+if os.path.exists(path):
+
+    st.success("✅ Athena found the Silverado model!")
+
+    st.write("File size:")
+
+    st.write(
+        os.path.getsize(path),
+        "bytes"
+    )
+
+else:
+
+    st.error(
+        "❌ Athena cannot find the model"
+    )
 
 
-<model-viewer
+st.write("Current files:")
 
-src="models/silverado.glb"
+for root, dirs, files in os.walk("."):
 
-camera-controls
+    for file in files:
 
-auto-rotate
+        if ".glb" in file:
 
-camera-orbit="0deg 70deg 3m"
-
-field-of-view="45deg"
-
-style="
-width:100%;
-height:600px;
-background:#222;
-">
-
-</model-viewer>
-
-
-</body>
-
-</html>
-"""
-
-
-components.html(
-    html,
-    height=650
-)
-
-
-st.divider()
-
-
-st.success("Athena Digital Twin System Online")
+            st.write(
+                root,
+                file
+            )
