@@ -1,10 +1,15 @@
+import streamlit as st
+
+from trading_engine import get_portfolio
+
+
 st.title("💼 Athena Portfolio")
 
 
 portfolio = get_portfolio()
 
 
-# Cash display
+# Cash
 st.metric(
     "💵 Fake Cash",
     f"${portfolio['cash']:,.2f}"
@@ -14,11 +19,11 @@ st.metric(
 st.divider()
 
 
-# Stocks owned
+# Holdings
 st.subheader("📊 Owned Stocks")
 
 
-if len(portfolio["stocks"]) > 0:
+if portfolio["stocks"]:
 
     for symbol, data in portfolio["stocks"].items():
 
@@ -42,20 +47,23 @@ else:
 st.divider()
 
 
-# History
+# Trade history
 st.subheader("📜 Trade History")
 
 
-if len(portfolio["history"]) > 0:
+if portfolio["history"]:
 
     for trade in portfolio["history"]:
 
         st.write(
             f"""
-            {trade['action']} 
-            {trade['shares']} shares of 
-            {trade['stock']} 
-            at ${trade['price']}
+            **{trade['action']}**
+
+            Stock: {trade['stock']}
+
+            Shares: {trade['shares']}
+
+            Price: ${trade['price']}
             """
         )
 
