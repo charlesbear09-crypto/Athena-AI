@@ -1,10 +1,9 @@
 import streamlit as st
 
-
 PASSWORD = "2327"
 
 
-def login():
+def unlock_app():
 
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
@@ -12,10 +11,10 @@ def login():
 
     if not st.session_state.authenticated:
 
-        st.title("🔐 Athena AI Secure Login")
+        st.title("🔐 Athena AI Locked")
 
         password = st.text_input(
-            "Enter Password",
+            "Enter Athena Password",
             type="password"
         )
 
@@ -23,13 +22,10 @@ def login():
         if st.button("Unlock Athena"):
 
             if password == PASSWORD:
-
                 st.session_state.authenticated = True
-                st.success("Athena Unlocked")
                 st.rerun()
 
             else:
-
                 st.error("Incorrect Password")
 
 
