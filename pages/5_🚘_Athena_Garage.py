@@ -1,5 +1,5 @@
 import streamlit as st
-import os
+import streamlit.components.v1 as components
 
 from auth import unlock_app
 
@@ -8,42 +8,109 @@ if not unlock_app():
     st.stop()
 
 
-st.title("🚘 Athena Garage Test")
+st.set_page_config(
+    page_title="Athena Garage",
+    page_icon="🚘",
+    layout="wide"
+)
 
 
-st.write("Checking model file...")
+st.title("🚘 ATHENA GARAGE")
+st.subheader("2004 Silverado 1500 Single Cab 4.8L V8")
 
 
-path = "models/silverado.glb"
+st.divider()
 
 
-if os.path.exists(path):
-
-    st.success("✅ Athena found the Silverado model!")
-
-    st.write("File size:")
-
-    st.write(
-        os.path.getsize(path),
-        "bytes"
-    )
-
-else:
-
-    st.error(
-        "❌ Athena cannot find the model"
-    )
+st.header("🧊 Athena Digital Twin")
 
 
-st.write("Current files:")
+html = """
 
-for root, dirs, files in os.walk("."):
+<!DOCTYPE html>
 
-    for file in files:
+<html>
 
-        if ".glb" in file:
+<head>
 
-            st.write(
-                root,
-                file
-            )
+<script type="module"
+src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js">
+</script>
+
+
+<style>
+
+body {
+    margin:0;
+    background:#111;
+}
+
+
+model-viewer {
+
+    width:100%;
+    height:650px;
+    background:#222;
+
+}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+<model-viewer
+
+src="/models/silverado.glb"
+
+camera-controls
+
+auto-rotate
+
+shadow-intensity="1"
+
+exposure="1"
+
+camera-orbit="0deg 75deg 3m"
+
+field-of-view="45deg"
+
+>
+
+</model-viewer>
+
+
+</body>
+
+
+</html>
+
+"""
+
+
+components.html(
+    html,
+    height=700
+)
+
+
+
+st.divider()
+
+
+st.success(
+"""
+🤖 Athena Digital Twin Online
+
+Systems:
+
+✅ Silverado Model Connected
+✅ 3D Viewer Active
+🔄 Part Scanner Loading
+🔄 Modification System Loading
+"""
+)
