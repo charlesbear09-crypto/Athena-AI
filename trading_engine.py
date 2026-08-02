@@ -1,100 +1,209 @@
 import json
 import os
+from datetime import datetime
 
 
 PORTFOLIO_FILE = "portfolio.json"
 
 
+
 def load_portfolio():
+
     if not os.path.exists(PORTFOLIO_FILE):
+
         return {
             "cash": 10000,
             "stocks": {},
-            "history": []
+            "history": [],
+            "athena_log": []
         }
 
+
     with open(PORTFOLIO_FILE, "r") as file:
+
         return json.load(file)
 
 
+
+
 def save_portfolio(portfolio):
+
     with open(PORTFOLIO_FILE, "w") as file:
-        json.dump(portfolio, file, indent=4)
+
+        json.dump(
+            portfolio,
+            file,
+            indent=4
+        )
 
 
-def buy_stock(symbol, shares, price):
+
+
+def log_athena(action, reason):
+
     portfolio = load_portfolio()
+
+
+    portfolio["athena_log"].append({
+
+        "time": str(datetime.now()),
+
+        "action": action,
+
+        "reason": reason
+
+    })
+
+
+    save_portfolio(portfolio)
+
+
+
+
+
+def buy_stock(symbol, shares, price, reason="Manual trade"):
+
+    portfolio = load_portfolio()
+
 
     cost = shares * price
 
+
     if cost > portfolio["cash"]:
-        return False, "Not enough fake cash."
+
+        return False, "Not enough cash"
+
+
 
     portfolio["cash"] -= cost
 
+
+
     if symbol not in portfolio["stocks"]:
+
         portfolio["stocks"][symbol] = {
+
             "shares": 0,
+
             "average_price": price
+
         }
 
-    old_shares = portfolio["stocks"][symbol]["shares"]
-    old_average = portfolio["stocks"][symbol]["average_price"]
 
-    new_total_shares = old_shares + shares
 
-    new_average = (
-        (old_shares * old_average) + (shares * price)
-    ) / new_total_shares
+    old = portfolio["stocks"][symbol]
 
-    portfolio["stocks"][symbol]["shares"] = new_total_shares
-    portfolio["stocks"][symbol]["average_price"] = round(new_average, 2)
+
+    total_shares = old["shares"] + shares
+
+
+    average = (
+
+        (old["shares"] * old["average_price"])
+
+        + (shares * price)
+
+    ) / total_shares
+
+
+
+    old["shares"] = total_shares
+
+    old["average_price"] = round(
+        average,
+        2
+    )
+
 
 
     portfolio["history"].append({
-        "action": "BUY",
+
+        "type": "BUY",
+
         "stock": symbol,
+
         "shares": shares,
+
         "price": price
+
     })
+
 
     save_portfolio(portfolio)
 
-    return True, "Bought successfully."
+
+    log_athena(
+
+        f"Bought {shares} shares of {symbol}",
+
+        reason
+
+    )
 
 
-def sell_stock(symbol, shares, price):
+    return True, "Purchase completed"
+
+
+
+
+
+def sell_stock(symbol, shares, price, reason="Manual trade"):
+
     portfolio = load_portfolio()
 
+
     if symbol not in portfolio["stocks"]:
-        return False, "You do not own this stock."
+
+        return False, "No shares owned"
+
+
 
     if portfolio["stocks"][symbol]["shares"] < shares:
-        return False, "Not enough shares."
+
+        return False, "Not enough shares"
+
+
+
 
     portfolio["stocks"][symbol]["shares"] -= shares
 
-    money = shares * price
 
-    portfolio["cash"] += money
+    portfolio["cash"] += shares * price
+
 
 
     portfolio["history"].append({
-        "action": "SELL",
+
+        "type": "SELL",
+
         "stock": symbol,
+
         "shares": shares,
+
         "price": price
+
     })
 
-
-    if portfolio["stocks"][symbol]["shares"] == 0:
-        del portfolio["stocks"][symbol]
 
 
     save_portfolio(portfolio)
 
-    return True, "Sold successfully."
+
+    log_athena(
+
+        f"Sold {shares} shares of {symbol}",
+
+        reason
+
+    )
+
+
+    return True, "Sale completed"
+
+
+
 
 
 def get_portfolio():
+
     return load_portfolio()
