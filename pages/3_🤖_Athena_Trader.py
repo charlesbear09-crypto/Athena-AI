@@ -1,3 +1,8 @@
+import streamlit as st
+
+from athena_trader import analyze_portfolio
+
+
 st.title("🤖 Athena Trading Assistant")
 
 
@@ -19,19 +24,22 @@ if st.button("🧠 Analyze Portfolio"):
 st.divider()
 
 
-st.info(
+st.subheader("Athena Status")
+
+
+st.write(
     """
-    Athena abilities:
+    ✅ Portfolio access connected
+
+    ✅ Paper trading engine connected
+
+    ✅ Trade history connected
+
+    🔄 Future upgrades:
     
-    ✅ Read portfolio
-    ✅ Analyze positions
-    ✅ Monitor trades
-    
-    Future upgrades:
-    
-    📈 Live market data
-    🤖 AI trade suggestions
-    🟢 Buy approval system
-    🔴 Sell approval system
+    - Live stock prices
+    - AI market analysis
+    - Buy/Hold/Sell recommendations
+    - Trade approval system
     """
 )
