@@ -1,3 +1,7 @@
+from auth import check_login
+
+if not check_login():
+    st.stop()
 import streamlit as st
 from trading_engine import get_portfolio
 
