@@ -1,6 +1,6 @@
 import streamlit as st
 from openai import OpenAI
-
+st.write("Key loaded:", bool(st.secrets.get("OPENAI_API_KEY")))
 # Page setup
 st.set_page_config(
     page_title="Athena AI",
