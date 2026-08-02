@@ -1,14 +1,3 @@
-import streamlit as st
-
-from auth import check_login
-from trading_engine import buy_stock, sell_stock
-
-
-# Lock page
-if not check_login():
-    st.stop()
-
-
 st.title("📈 Athena Paper Trading")
 
 st.write(
